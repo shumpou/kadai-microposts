@@ -87,4 +87,49 @@ class UsersController extends Controller
         ]);
 
     }
+
+
+      /************* お気に入り機能 ***************/
+
+      /**
+     * ユーザーのお気に入り投稿した一覧ページを表示するアクション。
+     *
+     * @param  $id  ユーザーのid
+     * @return \Illuminate\Http\Response
+     */
+    public function favoritedPost($id)
+    {
+        // idの値でユーザーを検索して取得
+        $user = User::findOrFail($id);
+
+        // 関係するモデルの件数をロード
+        $user->loadRelationshipCounts();
+
+        // ユーザーのお気に入り一覧を取得
+        $microposts = $user->favorites()->orderBy('created_at', 'desc')->paginate(10);
+
+        // お気に入り一覧ビューでそれらを表示
+        return view('users.favoritedPost', [
+            'user' => $user,
+            'microposts' => $microposts,
+        ]);
+    }
+
+
+public function favorites($id)
+{
+    $user = \App\Models\User::findOrFail($id);
+
+    // ユーザーのお気に入り一覧を取得
+    $favorites = $user->favorites()->paginate(10);
+
+    return view('favorites.favorite', [
+        'user' => $user,
+        'favorites' => $favorites,
+    ]);
+}
+
+
+
+
 }

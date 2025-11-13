@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Micropost extends Model
 {
-    /** @use HasFactory<\Database\Factories\MicropostFactory> */
     use HasFactory;
 
     protected $fillable = ['content'];
@@ -18,5 +17,13 @@ class Micropost extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * この投稿をお気に入り登録しているユーザーを取得する。
+     */
+    public function favoritedUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorites', 'micropost_id', 'user_id')->withTimestamps();
     }
 }

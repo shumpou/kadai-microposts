@@ -19,17 +19,48 @@
                             {{-- 投稿内容 --}}
                             <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
                         </div>
-                        <div>
-                            @if (Auth::id() == $micropost->user_id)
-                                {{-- 投稿削除ボタンのフォーム --}}
-                                <form method="POST" action="{{ route('microposts.destroy', $micropost->id) }}">
+
+                        <div class="flex">
+　                      <div class="w-fit mr-1">
+                        {{-- お気に入り登録／お気に入り解除ボタン --}}
+                        <div class="mt-2">
+                            @if (Auth::user()->is_favorited($micropost->id))
+                                {{-- お気に入り解除ボタン --}}
+                                <form method="POST" action="{{ route('favorites.unfavorite', $micropost->id) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-soft btn-error btn-sm normal-case"
-                                        onclick="return confirm('Delete id = {{ $micropost->id }} ?')">Delete</button>
+                                    <button type="submit"
+                                        class="btn btn-error btn-soft btn-xs normal-case"
+                                        onclick="return confirm('id = {{ $micropost->id }} のお気に入りを解除します。よろしいですか？')">
+                                        Unfavorite
+                                    </button>
+                                </form>
+                            @else
+                                {{-- お気に入り登録ボタン --}}
+                                <form method="POST" action="{{ route('favorites.favorite', $micropost->id) }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="btn btn-primary btn-soft btn-xs normal-case">
+                                        Favorite
+                                    </button>
                                 </form>
                             @endif
                         </div>
+                        </div>
+                        {{-- 投稿削除ボタン（自分の投稿のみ） --}}
+                        @if (Auth::id() == $micropost->user_id)
+                            <div class="mt-2">
+                                <form method="POST" action="{{ route('microposts.destroy', $micropost->id) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-soft btn-error btn-xs normal-case"
+                                        onclick="return confirm('Delete id = {{ $micropost->id }} ?')">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    </div>
                     </div>
                 </li>
             @endforeach
