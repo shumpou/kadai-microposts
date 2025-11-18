@@ -19,6 +19,14 @@
                             {{-- 投稿内容 --}}
                             <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
                         </div>
+                            {{-- 投稿編集 --}}
+                        <div class="mt-2">
+                            @if (Auth::id() === $micropost->user_id)
+                                <a class="link link-hover text-info" href="{{ route('microposts.edit', $micropost->id) }}">
+                                    この投稿を編集する
+                                </a>
+                            @endif
+                        </div>
 
                         <div class="flex">
 　                      <div class="w-fit mr-1">

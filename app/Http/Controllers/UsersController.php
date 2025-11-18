@@ -129,7 +129,20 @@ public function favorites($id)
     ]);
 }
 
+public function destroySelf(User $user)
+    {
+        $user = Auth::user();
 
+        // 先にユーザーの投稿（Microposts）を削除
+        $user->microposts()->delete();
+
+
+        // ユーザー削除
+        $user->delete();
+
+        // トップページへリダイレクトさせる
+        return redirect('/');
+    }
 
 
 }

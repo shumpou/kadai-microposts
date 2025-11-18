@@ -13,6 +13,7 @@ class MicropostsController extends Controller
     public function index()
     {
         $data = [];
+
         if (Auth::check()) { // 認証済みの場合
             // 認証済みユーザーを取得
             /** @var \App\Models\User|null $user */
@@ -46,6 +47,62 @@ class MicropostsController extends Controller
         return back();
     }
 
+    public function show(string $id)
+    {
+        // idの値でメッセージを検索して取得
+        $micropost = Micropost::findOrFail($id);
+
+        // 自分のタスクでなければトップへ
+        if (Auth::id() !== $micropost->user_id) {
+            return redirect('/');
+        }
+
+        // メッセージ詳細ビューでそれを表示
+        return view('microposts.show', [
+            'micropost' => $micropost,
+        ]);
+    }
+
+    public function edit(string $id)
+    {
+        // idの値でメッセージを検索して取得
+        $micropost = Micropost::findOrFail($id);
+
+        // 自分のタスクでなければトップへ
+        if (Auth::id() !== $micropost->user_id) {
+        return redirect('/');
+        }
+
+        // メッセージ編集ビューでそれを表示
+        return view('microposts.edit', [
+            'micropost' => $micropost,
+        ]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        // バリデーション
+        $request->validate([
+            'content' => 'required|max:255',
+        ]);
+        // idの値でタスクを検索して取得
+        $micropost = Micropost::findOrFail($id);
+
+        // 自分のタスクでなければトップへ
+        if (Auth::id() !== $micropost->user_id) {
+        return redirect('/');
+        }
+
+
+        // タスクを更新
+        $micropost->content = $request->content;
+        $micropost->save();
+
+        // トップページへリダイレクトさせる
+        return redirect('/');
+    }
+
+
     public function destroy(string $id)
     {
         // idの値で投稿を検索して取得
@@ -54,6 +111,11 @@ class MicropostsController extends Controller
         // 認証済みユーザー（閲覧者）がその投稿の所有者である場合は投稿を削除
         if (Auth::id() === $micropost->user_id) {
             $micropost->delete();
+
+            if (strpos(url()->previous(), '/microposts/' . $id) !== false) {
+            return redirect('/')
+                ->with('success', 'Delete Successful');
+            }
             return back()
                 ->with('success','Delete Successful');
         }
@@ -62,5 +124,7 @@ class MicropostsController extends Controller
         return back()
             ->with('Delete Failed');
     }
+
+
 
 }

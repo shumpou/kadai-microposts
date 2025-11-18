@@ -15,4 +15,15 @@
             @include('microposts.microposts')
         </div>
     </div>
+        @auth
+            @if (Auth::id() === $user->id)
+                <form action="{{ route('user.destroy') }}" method="POST"
+                    onsubmit="return confirm('本当に退会しますか？')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-error mt-4">退会する</button>
+                </form>
+            @endif
+        @endauth
+
 @endsection

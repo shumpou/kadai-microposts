@@ -21,7 +21,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('followers', [UsersController::class, 'followers'])->name('users.followers');
         Route::get('favorites', [UsersController::class, 'favoritedPost'])->name('users.favorites');
 
-
     });
 
 
@@ -42,10 +41,15 @@ Route::group(['middleware' => ['auth']], function () {
     // Volt::route('settings/password', 'settings.password')->name('settings.password');
     // Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 
-    Route::resource('microposts', MicropostsController::class, ['only' => ['store', 'destroy']]);
+    Route::resource('microposts', MicropostsController::class, ['only' => ['store', 'destroy', 'edit', 'update', 'show']]);
+
+    // edit: 更新用のフォームページ
+    Route::get('microposts/{id}/edit', [MicropostsController::class, 'edit'])->name('microposts.edit');
+
+    // 退会する
+    Route::delete('/user', [UsersController::class, 'destroySelf'])->name('user.destroy')->middleware('auth');
 
 });
-
 
 
 require __DIR__.'/auth.php';
